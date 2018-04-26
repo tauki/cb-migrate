@@ -5,16 +5,13 @@ import (
 	"fmt"
 	"time"
 	"os"
+	"errors"
+	"github.com/cb-migrate/models"
+	"github.com/cb-migrate/connection"
 )
 
-type cluster struct {
-	address string
-	username string
-	password string
-}
-
 func main() {
-	source, target := cluster{}, cluster{}
+	source, target := models.Cluster{}, models.Cluster{}
 
 	app := cli.NewApp()
 	app.Name = "cb-migrate"
@@ -28,19 +25,19 @@ func main() {
 			Name: "source",
 			Value: "localhost:8091",
 			Usage: "The source from where to get the buckets",
-			Destination: &source.address,
+			Destination: &source.Address,
 		},
 		cli.StringFlag {
 			Name: "source_user",
 			Value: "Administrator",
-			Usage: "Source cluster Username",
-			Destination: &source.username,
+			Usage: "Source Cluster Username",
+			Destination: &source.Username,
 		},
 		cli.StringFlag {
 			Name: "source_pass",
 			Value: "password",
-			Usage: "Source cluster Password",
-			Destination: &source.address,
+			Usage: "Source Cluster Password",
+			Destination: &source.Password,
 		},
 
 		// target
@@ -48,19 +45,19 @@ func main() {
 			Name: "target",
 			Value: "localhost:8091",
 			Usage: "The location where to post the buckets from source",
-			Destination: &target.address,
+			Destination: &target.Address,
 		},
 		cli.StringFlag {
 			Name: "target_user",
 			Value: "Administrator",
-			Usage: "Destination cluster Username",
-			Destination: &target.username,
+			Usage: "Destination Cluster Username",
+			Destination: &target.Username,
 		},
 		cli.StringFlag {
 			Name: "target_pass",
 			Value: "password",
-			Usage: "Destination cluster Password",
-			Destination: &target.address,
+			Usage: "Destination Cluster Password",
+			Destination: &target.Password,
 		},
 	}
 
@@ -69,6 +66,20 @@ func main() {
 			Name:  "run",
 			Usage: "Run the cli app",
 			Action: func(c *cli.Context) {
+				err := checkFlags(&source, &target)
+				if err != nil {
+					panic(err.Error())
+				}
+
+				err = checkIfUrl(source.Address, target.Address)
+				if err != nil {
+					panic(err.Error())
+				}
+
+				sCtrl, err := connection.GetBucketServer(&source)
+				if err != nil {} // todo: error handle
+				tCtrl, err := connection.GetBucketServer(&target)
+				if err != nil {} // todo: error handle
 
 			},
 		},
@@ -77,4 +88,16 @@ func main() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+}
+
+func checkFlags(source, target *models.Cluster) (error) {
+	if source.Address == "" || source.Username == "" || source.Password == "" ||
+		target.Address == "" || target.Username == "" || target.Password == "" {
+			return errors.New("check flags")
+	}
+	return nil
+}
+
+func checkIfUrl(source, target string) (error) {
+	return nil
 }
