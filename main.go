@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/cb-migrate/connection"
+	"github.com/cb-migrate/connection/cluster"
 	"github.com/cb-migrate/models"
 	"github.com/urfave/cli"
 	"os"
@@ -22,25 +22,25 @@ func main() {
 		// source
 		cli.StringFlag{
 			Name:        "source",
-			Value:       "localhost",
+			//Value:       "localhost",
 			Usage:       "The source from where to get the buckets",
 			Destination: &source.DBHost,
 		},
 		cli.StringFlag{
 			Name:        "source_user",
-			Value:       "Administrator",
+			//Value:       "Administrator",
 			Usage:       "Source Cluster Username",
 			Destination: &source.DBUser,
 		},
 		cli.StringFlag{
 			Name:        "source_pass",
-			Value:       "password",
+			//Value:       "password",
 			Usage:       "Source Cluster Password",
 			Destination: &source.DBPassword,
 		},
 		cli.StringFlag{
 			Name:        "source_port",
-			Value:       "8091",
+			//Value:       "8091",
 			Usage:       "Port the source is running",
 			Destination: &source.DBPort,
 		},
@@ -48,25 +48,25 @@ func main() {
 		// target
 		cli.StringFlag{
 			Name:        "target",
-			Value:       "localhost",
+			//Value:       "localhost",
 			Usage:       "The location where to post the buckets from source",
 			Destination: &target.DBHost,
 		},
 		cli.StringFlag{
 			Name:        "target_user",
-			Value:       "Administrator",
+			//Value:       "Administrator",
 			Usage:       "Destination Cluster Username",
 			Destination: &target.DBUser,
 		},
 		cli.StringFlag{
 			Name:        "target_pass",
-			Value:       "password",
+			//Value:       "password",
 			Usage:       "Destination Cluster Password",
 			Destination: &target.DBPassword,
 		},
 		cli.StringFlag{
 			Name:        "target_port",
-			Value:       "8091",
+			//Value:       "8091",
 			Usage:       "Port the target is running",
 			Destination: &target.DBPort,
 		},
@@ -79,6 +79,7 @@ func main() {
 			Action: func(c *cli.Context) {
 
 				for {
+					fmt.Println(source)
 					if checkFlags(&source, "Source") {
 						break
 					}
@@ -90,12 +91,14 @@ func main() {
 					}
 				}
 
-				sCtrl, err := connection.GetClusterServer(&source)
+				sCtrl, err := cluster.GetServer(&source)
 				if err != nil {
+					panic(err)
 				} // todo: error handle
 
-				tCtrl, err := connection.GetClusterServer(&target)
+				tCtrl, err := cluster.GetServer(&target)
 				if err != nil {
+					panic(err)
 				} // todo: error handle
 
 				fmt.Println(sCtrl)
@@ -114,8 +117,8 @@ func checkFlags(data *models.Cluster, context string) (bool) {
 
 	if data.DBHost == "" {
 		check = false
-		fmt.Printf("Please input %s address: ", context)
-		fmt.Scanf("%s", data.DBHost)
+		fmt.Printf("Please input %s address: \n", context)
+		fmt.Scanln(&data.DBHost)
 		for {
 			if checkIfUrl(data.DBHost) {
 				break
@@ -125,20 +128,20 @@ func checkFlags(data *models.Cluster, context string) (bool) {
 
 	if data.DBPort == "" {
 		check = false
-		fmt.Printf("Please input %s port: ", context)
-		fmt.Scanf("%s", data.DBPort)
+		fmt.Printf("Please input %s port: \n", context)
+		fmt.Scanln(&data.DBPort)
 	}
 
 	if data.DBUser == "" {
 		check = false
-		fmt.Print("Please input DB Username: ")
-		fmt.Scanf("%s", data.DBUser)
+		fmt.Printf("Please input %s DB Username: ", context)
+		fmt.Scanln(&data.DBUser)
 	}
 
 	if data.DBPassword == "" {
 		check = false
-		fmt.Print("Please input DB password: ")
-		fmt.Scanf("%s", data.DBPassword)
+		fmt.Printf("Please input %s DB password: ", context)
+		fmt.Scanln(&data.DBPassword)
 	}
 
 	return check
