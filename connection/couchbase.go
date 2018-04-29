@@ -22,3 +22,17 @@ func GetClusterServer(cred *models.Cluster) (*ClusterServer, error) {
 	}, nil
 }
 
+func (c *ClusterServer) GetBucketNames() (*[]models.Bucket, error) {
+	mngr := c.Cluster.Manager(c.Cred.DBUser, c.Cred.DBPassword)
+	bucketObj, _ := mngr.GetBuckets()
+
+	var buckets []models.Bucket
+	for _, bucket := range bucketObj {
+		buckets = append(buckets, models.Bucket{
+			BucketName:     bucket.Name,
+			BucketPassword: bucket.Password,
+		})
+	}
+
+	return &buckets, nil
+}
