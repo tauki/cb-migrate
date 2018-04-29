@@ -1,7 +1,13 @@
 package models
 
 type Cluster struct {
-	Address string
-	Username string
-	Password string
+	DBHost     string
+	DBPort     string
+	DBUser     string
+	DBPassword string
+}
+
+type Bucket struct {
+	BucketName     string
+	BucketPassword string
 }
