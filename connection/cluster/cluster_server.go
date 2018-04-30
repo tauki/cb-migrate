@@ -16,14 +16,28 @@ func GetServer(cred *models.Cluster) (*Server, error) {
 		return nil, err
 	}
 
+	err = cluster.Authenticate(gocb.PasswordAuthenticator{
+		Username: cred.DBUser,
+		Password: cred.DBPassword,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	buckets, err := getBuckets(cluster, cred)
+	if err != nil {
+	} // todo: error handle
+
+	cred.Buckets = *buckets
+
 	return &Server{
 		Cluster: cluster,
 		Cred:    cred,
 	}, nil
 }
 
-func (c *Server) GetBucketNames() (*[]models.Bucket, error) {
-	mngr := c.Cluster.Manager(c.Cred.DBUser, c.Cred.DBPassword)
+func getBuckets(cluster *gocb.Cluster, cred *models.Cluster) (*[]models.Bucket, error) {
+	mngr := cluster.Manager(cred.DBUser, cred.DBPassword)
 	bucketObj, _ := mngr.GetBuckets()
 
 	var buckets []models.Bucket
