@@ -5,6 +5,7 @@ type Cluster struct {
 	DBPort     string
 	DBUser     string
 	DBPassword string
+	Buckets    []Bucket
 }
 
 type Bucket struct {
