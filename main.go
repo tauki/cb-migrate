@@ -94,8 +94,19 @@ func main() {
 					panic(err)
 				} // todo: error handle
 
-				fmt.Println(sCtrl)
-				fmt.Println(tCtrl)
+				if len(*sCtrl.Data.Buckets) != len(*tCtrl.Data.Buckets) {
+					for _, bucket := range *sCtrl.Data.Buckets {
+						if !tCtrl.BucketExists(bucket.Name) {
+							tCtrl.CreateBucket(bucket.Name, bucket)
+						}
+					}
+				}
+
+				for _, bucket := range *sCtrl.Data.Buckets {
+					err := tCtrl.Copy(bucket)
+					if err != nil {
+					} // todo: error handle
+				}
 			},
 		},
 	}
