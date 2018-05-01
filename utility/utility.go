@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func CheckFlags(data *models.Cluster, context string) (bool) {
+func CheckFlags(data *models.Data, context string) (bool) {
 	check := true
 
 	if data.DBHost == "" {

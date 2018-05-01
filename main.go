@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/cb-migrate/connection/cluster"
+	cb "github.com/cb-migrate/connection"
 	"github.com/cb-migrate/models"
 	"github.com/cb-migrate/utility"
 	"github.com/urfave/cli"
@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	source, target := models.Cluster{}, models.Cluster{}
+	source, target := models.Data{}, models.Data{}
 
 	app := cli.NewApp()
 	app.Name = "cb-migrate"
@@ -28,12 +28,12 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:        "source_user",
-			Usage:       "Source Cluster Username",
+			Usage:       "Source Data Username",
 			Destination: &source.DBUser,
 		},
 		cli.StringFlag{
 			Name:        "source_pass",
-			Usage:       "Source Cluster Password",
+			Usage:       "Source Data Password",
 			Destination: &source.DBPassword,
 		},
 		cli.StringFlag{
@@ -50,12 +50,12 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:        "target_user",
-			Usage:       "Destination Cluster Username",
+			Usage:       "Destination Data Username",
 			Destination: &target.DBUser,
 		},
 		cli.StringFlag{
 			Name:        "target_pass",
-			Usage:       "Destination Cluster Password",
+			Usage:       "Destination Data Password",
 			Destination: &target.DBPassword,
 		},
 		cli.StringFlag{
@@ -84,12 +84,12 @@ func main() {
 					}
 				}
 
-				sCtrl, err := cluster.GetServer(&source)
+				sCtrl, err := cb.GetServer(&source)
 				if err != nil {
 					panic(err)
 				} // todo: error handle
 
-				tCtrl, err := cluster.GetServer(&target)
+				tCtrl, err := cb.GetServer(&target)
 				if err != nil {
 					panic(err)
 				} // todo: error handle

@@ -1,6 +1,6 @@
 package models
 
-type Cluster struct {
+type Data struct {
 	DBHost     string
 	DBPort     string
 	DBUser     string

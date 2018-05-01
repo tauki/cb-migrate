@@ -1,4 +1,4 @@
-package cluster
+package connection
 
 import (
 	"github.com/cb-migrate/models"
@@ -7,36 +7,36 @@ import (
 
 type Server struct {
 	Cluster *gocb.Cluster
-	Cred    *models.Cluster
+	Data    *models.Data
 }
 
-func GetServer(cred *models.Cluster) (*Server, error) {
-	cluster, err := gocb.Connect(cred.DBHost + ":" + cred.DBPort)
+func GetServer(data *models.Data) (*Server, error) {
+	cluster, err := gocb.Connect(data.DBHost + ":" + data.DBPort)
 	if err != nil {
 		return nil, err
 	}
 
 	err = cluster.Authenticate(gocb.PasswordAuthenticator{
-		Username: cred.DBUser,
-		Password: cred.DBPassword,
+		Username: data.DBUser,
+		Password: data.DBPassword,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	buckets, err := getBuckets(cluster, cred)
+	buckets, err := getBucketSettings(cluster, data)
 	if err != nil {
 	} // todo: error handle
 
-	cred.Buckets = *buckets
+	data.Buckets = *buckets
 
 	return &Server{
 		Cluster: cluster,
-		Cred:    cred,
+		Data:    data,
 	}, nil
 }
 
-func getBuckets(cluster *gocb.Cluster, cred *models.Cluster) (*[]models.Bucket, error) {
+func getBucketSettings(cluster *gocb.Cluster, cred *models.Data) (*[]models.Bucket, error) {
 	mngr := cluster.Manager(cred.DBUser, cred.DBPassword)
 	bucketObj, _ := mngr.GetBuckets()
 
