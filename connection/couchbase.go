@@ -28,7 +28,7 @@ func GetServer(data *models.Data) (*Server, error) {
 	if err != nil {
 	} // todo: error handle
 
-	data.Buckets = *buckets
+	data.Buckets = &buckets
 
 	return &Server{
 		Cluster: cluster,
@@ -36,17 +36,20 @@ func GetServer(data *models.Data) (*Server, error) {
 	}, nil
 }
 
-func getBucketSettings(cluster *gocb.Cluster, cred *models.Data) (*[]models.Bucket, error) {
+func (s *Server) CreateBucket(name string, settings *gocb.BucketSettings) (error) {
+	mngr := s.Cluster.Manager(s.Data.DBUser, s.Data.DBPassword)
+	return mngr.InsertBucket(settings)
+}
+
+func (s *Server) Copy(settings *gocb.BucketSettings) (error) {
+	return nil
+}
+
+func getBucketSettings(cluster *gocb.Cluster, cred *models.Data) ([]*gocb.BucketSettings, error) {
 	mngr := cluster.Manager(cred.DBUser, cred.DBPassword)
-	bucketObj, _ := mngr.GetBuckets()
+	return mngr.GetBuckets()
+}
 
-	var buckets []models.Bucket
-	for _, bucket := range bucketObj {
-		buckets = append(buckets, models.Bucket{
-			BucketName:     bucket.Name,
-			BucketPassword: bucket.Password,
-		})
-	}
-
-	return &buckets, nil
+func (s *Server) BucketExists(name string) (bool) {
+	return false // todo: check if bucket truly exist
 }
