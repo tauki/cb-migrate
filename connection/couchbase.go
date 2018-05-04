@@ -36,20 +36,25 @@ func GetServer(data *models.Data) (*Server, error) {
 	}, nil
 }
 
+func getBucketSettings(cluster *gocb.Cluster, cred *models.Data) ([]*gocb.BucketSettings, error) {
+	mngr := cluster.Manager(cred.DBUser, cred.DBPassword)
+	return mngr.GetBuckets()
+}
+
 func (s *Server) CreateBucket(name string, settings *gocb.BucketSettings) (error) {
 	mngr := s.Cluster.Manager(s.Data.DBUser, s.Data.DBPassword)
 	return mngr.InsertBucket(settings)
 }
 
 func (s *Server) Copy(settings *gocb.BucketSettings) (error) {
-	return nil
-}
-
-func getBucketSettings(cluster *gocb.Cluster, cred *models.Data) ([]*gocb.BucketSettings, error) {
-	mngr := cluster.Manager(cred.DBUser, cred.DBPassword)
-	return mngr.GetBuckets()
+	return nil // todo
 }
 
 func (s *Server) BucketExists(name string) (bool) {
-	return false // todo: check if bucket truly exist
+	for _, bucket := range *s.Data.Buckets {
+		if name == bucket.Name {
+			return true
+		}
+	}
+	return false
 }
