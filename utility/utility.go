@@ -1,11 +1,11 @@
 package utility
 
 import (
-	"github.com/cb-migrate/models"
 	"fmt"
+	"github.com/cb-migrate/models"
 )
 
-func CheckFlags(data *models.Data, context string) (bool) {
+func CheckFlags(data *models.Data, context string) bool {
 	check := true
 
 	if data.DBHost == "" {
@@ -40,18 +40,19 @@ func CheckFlags(data *models.Data, context string) (bool) {
 	return check
 }
 
-func checkIfUrl(source string) (bool) {
+func checkIfUrl(source string) bool {
 	return true
 }
 
-func GetBucketCreds(name string) (*models.Bucket) {
-	var bucket models.Bucket
-
-	bucket.BucketName = name
-
-	fmt.Printf("Please input the password for %s\n", name)
-	fmt.Println("leave empty for none")
-	fmt.Scanln(&bucket.BucketPassword)
-
-	return &bucket
-}
+//
+//func GetBucketCreds(name string) *models.Bucket {
+//	var bucket models.Bucket
+//
+//	bucket.BucketName = name
+//
+//	fmt.Printf("Please input the password for %s\n", name)
+//	fmt.Println("leave empty for none")
+//	fmt.Scanln(&bucket.BucketPassword)
+//
+//	return &bucket
+//}
